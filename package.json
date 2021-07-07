@@ -6,12 +6,17 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "antd": "^4.16.6",
+    "babel-plugin-import": "^1.13.3",
+    "ioredis": "^4.27.6",
+    "koa": "^2.13.1",
+    "koa-router": "^10.0.0",
     "next": "11.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"
