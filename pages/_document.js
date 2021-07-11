@@ -1,20 +1,36 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
+import { ServerStyleSheet } from "styled-components";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
-    const props = await Document.getInitialProps(ctx);
+    const sheet = new ServerStyleSheet();
 
-    return { ...props };
+    try {
+      ctx.renderPage(
+        (App) => (props) => sheet.collectStyles(<App {...props} />)
+      );
+
+      const initialProps = await Document.getInitialProps(ctx);
+
+      return {
+        ...initialProps,
+        styles: (
+          <>
+            {initialProps.styles}
+            {sheet.getStyleElement()}
+          </>
+        ),
+      };
+    } finally {
+      sheet.seal();
+    }
   }
 
   render() {
     return (
       <Html>
-        <Head>
-          <title>My app</title>
-          <style>{`.test {color: red}`}</style>
-        </Head>
-        <body className="test">
+        <Head></Head>
+        <body>
           <Main />
           <NextScript />
         </body>

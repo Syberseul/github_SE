@@ -11,11 +11,11 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-MyApp.getInitialProps = async (appContext) => {
+MyApp.getInitialProps = async (ctx) => {
   let appProps;
 
   if (App.getInitialProps) {
-    const appProps = await App.getInitialProps(appContext);
+    const appProps = await App.getInitialProps(ctx);
 
     return { ...appProps };
   }
