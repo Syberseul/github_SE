@@ -1,12 +1,22 @@
-import Temp from "../components/temp";
+import Comp from "../components/comp";
 import { withRouter } from "next/router";
 
-const B = ({ router }) => <Temp>B {router.query.id}</Temp>;
+const B = ({ router, name }) => (
+  <Comp>
+    B {router.query.id} {name}
+  </Comp>
+);
 
 B.getInitialProps = async ({ req, query }) => {
-  return {
-    // postId: query.id,
-  };
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({
+        name: "bua",
+      });
+    }, 1000);
+  });
+
+  return await promise;
 };
 
 export default withRouter(B);
