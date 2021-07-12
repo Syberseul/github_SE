@@ -17,6 +17,8 @@ const Home = ({ count }) => {
   );
 };
 
+// Home.getInitialProps = async (reduxStore) => {};
+
 const mapStateToProps = (state) => ({
   count: state.count,
 });

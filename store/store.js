@@ -17,10 +17,12 @@ function reducer(state = initialState, action) {
   }
 }
 
-const store = createStore(
-  reducer,
-  initialState,
-  composeWithDevTools(applyMiddleware(ReduxThunk))
-);
+export default function initializeStore(state) {
+  const store = createStore(
+    reducer,
+    Object.assign({}, initialState, state),
+    composeWithDevTools(applyMiddleware(ReduxThunk))
+  );
 
-export default store;
+  return store;
+}
