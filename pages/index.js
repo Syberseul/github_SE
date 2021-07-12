@@ -1,3 +1,5 @@
+import { connect } from "react-redux";
+
 const events = [
   "routeChangeStart",
   "routeChangeComplete",
@@ -7,10 +9,20 @@ const events = [
   "hashChangeComplete",
 ];
 
-export default function Home() {
+const Home = ({ count }) => {
   return (
     <>
-      <span>Index</span>
+      <span>Index {count}</span>
     </>
   );
-}
+};
+
+const mapStateToProps = (state) => ({
+  count: state.count,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  // ...
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
