@@ -22,13 +22,14 @@ const allReducers = combineReducers({
 
 //action creators
 export function logOut() {
-  console.log("rua");
   return (dispatch) => {
     axios
       .post("/logout")
       .then((resp) => {
         if (resp.status === 200) {
-          dispatch({ type: LOGOUT });
+          dispatch({
+            type: LOGOUT,
+          });
         } else {
           console.log("log out failed", resp.message);
         }

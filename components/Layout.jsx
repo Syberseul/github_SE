@@ -132,7 +132,7 @@ const mapState = (state) => ({
 });
 
 const mapDispatch = (dispatch) => ({
-  logOut: () => dispatch(logOut),
+  logOut: () => dispatch(logOut()),
 });
 
 export default connect(mapState, mapDispatch)(layout);
