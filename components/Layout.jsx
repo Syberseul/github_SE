@@ -6,6 +6,8 @@ const { Header, Content, Footer } = Layout;
 import getConfig from "next/config";
 import { connect } from "react-redux";
 
+import { logOut } from "../store/store";
+
 const { publicRuntimeConfig } = getConfig();
 
 const githubIconStyle = {
@@ -23,7 +25,7 @@ const footerStyle = {
 //   <div style={{ color, ...style }}>{children}</div>
 // );
 
-const layout = ({ children, user }) => {
+const layout = ({ children, user, logOut }) => {
   const [search, setSearch] = useState("");
 
   const handerSearchChange = useCallback(
@@ -35,10 +37,16 @@ const layout = ({ children, user }) => {
 
   const handleOnSearchChange = useCallback(() => {}, []);
 
+  const handleLogOut = useCallback(() => {
+    logOut();
+  }, []);
+
   const userDropdown = (
     <Menu>
       <Menu.Item>
-        <a href="javascript:void(0)">Log Out</a>
+        <a href="javascript:void(0)" onClick={handleLogOut}>
+          Log Out
+        </a>
       </Menu.Item>
     </Menu>
   );
@@ -123,4 +131,8 @@ const mapState = (state) => ({
   user: state.user,
 });
 
-export default connect(mapState, null)(layout);
+const mapDispatch = (dispatch) => ({
+  logOut: () => dispatch(logOut),
+});
+
+export default connect(mapState, mapDispatch)(layout);
