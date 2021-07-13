@@ -34,16 +34,6 @@ app.prepare().then(() => {
     await next();
   });
 
-  router.get("/a/:id", async (ctx) => {
-    const id = ctx.params.id;
-
-    await handle(ctx.req, ctx.res, {
-      pathname: "/a",
-      query: { id },
-    });
-    ctx.respond = false;
-  });
-
   router.get("/api/user/info", async (ctx) => {
     const user = ctx.session.userInfo;
     if (!user) {
@@ -55,21 +45,17 @@ app.prepare().then(() => {
     }
   });
 
-  router.get("/b/:id", async (ctx) => {
-    const id = ctx.params.id;
-
-    await handle(ctx.req, ctx.res, {
-      pathname: "/b",
-      query: { id },
-    });
-    ctx.respond = false;
-  });
-
   server.use(router.routes());
 
   server.use(async (ctx, next) => {
+    ctx.req.session = ctx.session;
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
+  });
+
+  server.use(async (ctx, next) => {
+    ctx.res.statusCode = 200;
+    await next();
   });
 
   server.listen(3000, () => {
