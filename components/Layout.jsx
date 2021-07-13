@@ -1,8 +1,12 @@
 import { useState, useCallback } from "react";
-import { Layout, Input, Avatar } from "antd";
+import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
 import { GithubOutlined } from "@ant-design/icons";
 import Container from "./Container";
 const { Header, Content, Footer } = Layout;
+import getConfig from "next/config";
+import { connect } from "react-redux";
+
+const { publicRuntimeConfig } = getConfig();
 
 const githubIconStyle = {
   color: "white",
@@ -19,7 +23,7 @@ const footerStyle = {
 //   <div style={{ color, ...style }}>{children}</div>
 // );
 
-const layout = ({ children }) => {
+const layout = ({ children, user }) => {
   const [search, setSearch] = useState("");
 
   const handerSearchChange = useCallback(
@@ -30,6 +34,14 @@ const layout = ({ children }) => {
   );
 
   const handleOnSearchChange = useCallback(() => {}, []);
+
+  const userDropdown = (
+    <Menu>
+      <Menu.Item>
+        <a href="javascript:void(0)">Log Out</a>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <Layout>
@@ -51,7 +63,19 @@ const layout = ({ children }) => {
           </div>
           <div className="header-right">
             <div className="user">
-              <Avatar size={40} icon="user" />
+              {user && user.id ? (
+                <Dropdown overlay={userDropdown}>
+                  <a href="/">
+                    <Avatar size={40} src={user.avatar_url} />
+                  </a>
+                </Dropdown>
+              ) : (
+                <Tooltip title="Click to login">
+                  <a href={publicRuntimeConfig.OAUTH_URL}>
+                    <Avatar size={40} icon="user" />
+                  </a>
+                </Tooltip>
+              )}
             </div>
           </div>
         </Container>
@@ -95,4 +119,8 @@ const layout = ({ children }) => {
   );
 };
 
-export default layout;
+const mapState = (state) => ({
+  user: state.user,
+});
+
+export default connect(mapState, null)(layout);

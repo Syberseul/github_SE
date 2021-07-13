@@ -7,11 +7,11 @@ import "antd/dist/antd.css";
 
 function MyApp({ Component, pageProps, reduxStore }) {
   return (
-    <Layout>
-      <Provider store={reduxStore}>
+    <Provider store={reduxStore}>
+      <Layout>
         <Component {...pageProps} />
-      </Provider>
-    </Layout>
+      </Layout>
+    </Provider>
   );
 }
 
