@@ -1,4 +1,8 @@
+import { useEffect } from "react";
 import { connect } from "react-redux";
+import axios from "axios";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 const events = [
   "routeChangeStart",
@@ -9,10 +13,15 @@ const events = [
   "hashChangeComplete",
 ];
 
-const Home = ({ count }) => {
+const Index = ({ count }) => {
+  useEffect(() => {
+    axios.get("/api/user/info").then((resp) => console.log(resp));
+  }, []);
+
   return (
     <>
       <span>Index {count}</span>
+      <a href={publicRuntimeConfig.OAUTH_URL}>Log In</a>
     </>
   );
 };
@@ -27,4 +36,4 @@ const mapDispatchToProps = (dispatch) => ({
   // ...
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Index);
