@@ -2,16 +2,12 @@ import { useState, useCallback } from "react";
 import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
 import { GithubOutlined } from "@ant-design/icons";
 import Container from "./Container";
-import getConfig from "next/config";
 import { connect } from "react-redux";
 import { withRouter } from "next/router";
-import axios from "axios";
 import { logOut } from "../store/store";
 import Link from "next/link";
 
 const { Header, Content, Footer } = Layout;
-
-const { publicRuntimeConfig } = getConfig();
 
 const githubIconStyle = {
   color: "white",

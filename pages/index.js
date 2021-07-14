@@ -5,16 +5,22 @@ function Index() {
 }
 
 Index.getInitialProps = async ({ ctx }) => {
-  const result = await api.request(
-    {
-      url: "/search/repositories?q=react",
-    },
-    ctx.req,
-    ctx.res
-  );
-  return {
-    data: result.data,
-  };
+  if (ctx) {
+    const result = await api.request(
+      {
+        url: "/search/repositories?q=react",
+      },
+      ctx.req,
+      ctx.res
+    );
+    return {
+      data: result.data,
+    };
+  } else {
+    return {
+      data: {},
+    };
+  }
 };
 
 export default Index;

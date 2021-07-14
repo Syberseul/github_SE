@@ -5,6 +5,7 @@ const session = require("koa-session");
 const next = require("next");
 const auth = require("./server/auth");
 const api = require("./server/api");
+const koaBody = require("koa-body");
 
 const RedisSessionStore = require("./server/session-store");
 
@@ -20,6 +21,9 @@ app.prepare().then(() => {
   const router = new Router();
 
   server.keys = ["search engine for github"];
+
+  server.use(koaBody());
+
   const SESSION_CONFIG = {
     key: "ghse",
     store: new RedisSessionStore(redis),
