@@ -5,6 +5,8 @@ import Container from "./Container";
 const { Header, Content, Footer } = Layout;
 import getConfig from "next/config";
 import { connect } from "react-redux";
+import { withRouter } from "next/router";
+import axios from "axios";
 
 import { logOut } from "../store/store";
 
@@ -25,7 +27,7 @@ const footerStyle = {
 //   <div style={{ color, ...style }}>{children}</div>
 // );
 
-const layout = ({ children, user, logOut }) => {
+const layout = ({ children, user, logOut, router }) => {
   const [search, setSearch] = useState("");
 
   const handerSearchChange = useCallback(
@@ -39,6 +41,22 @@ const layout = ({ children, user, logOut }) => {
 
   const handleLogOut = useCallback(() => {
     logOut();
+  }, [logOut]);
+
+  const handleGoToOAuth = useCallback((e) => {
+    e.preventDefault;
+    axios
+      .get(`/prepare-auth?url=${router.asPath}`)
+      .then((resp) => {
+        if (resp.status === 200) {
+          location.href = publicRuntimeConfig.OAUTH_URL;
+        } else {
+          console.log("prepare auth fail", resp);
+        }
+      })
+      .catch((err) => {
+        console.log("prepare auth fail", err.message);
+      });
   }, []);
 
   const userDropdown = (
@@ -79,7 +97,7 @@ const layout = ({ children, user, logOut }) => {
                 </Dropdown>
               ) : (
                 <Tooltip title="Click to login">
-                  <a href={publicRuntimeConfig.OAUTH_URL}>
+                  <a href={`/prepare-auth?url=${router.asPath}`}>
                     <Avatar size={40} icon="user" />
                   </a>
                 </Tooltip>
@@ -135,4 +153,4 @@ const mapDispatch = (dispatch) => ({
   logOut: () => dispatch(logOut()),
 });
 
-export default connect(mapState, mapDispatch)(layout);
+export default connect(mapState, mapDispatch)(withRouter(layout));
