@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import App from "next/app";
 import { Provider } from "react-redux";
 import Hoc from "../lib/with-redux";
-import Layout from "../components/Layout";
 import PageLoading from "../components/PageLoading";
-import "../styles/globals.css";
-import "antd/dist/antd.css";
 import Link from "next/link";
 import router from "next/router";
+import axios from "axios";
+import Layout from "../components/Layout";
+
+import "../styles/globals.css";
+import "antd/dist/antd.css";
 
 function MyApp({ Component, pageProps, reduxStore }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +25,7 @@ function MyApp({ Component, pageProps, reduxStore }) {
     router.events.on("routeChangeStart", changeIntoLoading);
     router.events.on("routeChangeComplete", changeNotLoading);
     router.events.on("routeChangeError", changeNotLoading);
+
     return () => {
       router.events.off("routeChangeStart", changeIntoLoading);
       router.events.off("routeChangeComplete", changeNotLoading);

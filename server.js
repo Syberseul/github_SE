@@ -4,6 +4,7 @@ const Redis = require("ioredis");
 const session = require("koa-session");
 const next = require("next");
 const auth = require("./server/auth");
+const api = require("./server/api");
 
 const RedisSessionStore = require("./server/session-store");
 
@@ -28,9 +29,9 @@ app.prepare().then(() => {
 
   // setting up and dealling with github OAuth login
   auth(server);
+  api(server);
 
   server.use(async (ctx, next) => {
-    console.log("session is: ", ctx.session);
     await next();
   });
 

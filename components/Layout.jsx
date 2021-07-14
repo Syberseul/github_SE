@@ -2,13 +2,14 @@ import { useState, useCallback } from "react";
 import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
 import { GithubOutlined } from "@ant-design/icons";
 import Container from "./Container";
-const { Header, Content, Footer } = Layout;
 import getConfig from "next/config";
 import { connect } from "react-redux";
 import { withRouter } from "next/router";
 import axios from "axios";
-
 import { logOut } from "../store/store";
+import Link from "next/link";
+
+const { Header, Content, Footer } = Layout;
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -28,7 +29,9 @@ const footerStyle = {
 // );
 
 const layout = ({ children, user, logOut, router }) => {
-  const [search, setSearch] = useState("");
+  const urlQuery = router.query && router.query.query;
+
+  const [search, setSearch] = useState(urlQuery || "");
 
   const handerSearchChange = useCallback(
     (event) => {
@@ -37,27 +40,13 @@ const layout = ({ children, user, logOut, router }) => {
     [setSearch]
   );
 
-  const handleOnSearchChange = useCallback(() => {}, []);
+  const handleOnSearchChange = useCallback(() => {
+    router.push(`/search?query=${search}`);
+  }, [search]);
 
   const handleLogOut = useCallback(() => {
     logOut();
   }, [logOut]);
-
-  const handleGoToOAuth = useCallback((e) => {
-    e.preventDefault;
-    axios
-      .get(`/prepare-auth?url=${router.asPath}`)
-      .then((resp) => {
-        if (resp.status === 200) {
-          location.href = publicRuntimeConfig.OAUTH_URL;
-        } else {
-          console.log("prepare auth fail", resp);
-        }
-      })
-      .catch((err) => {
-        console.log("prepare auth fail", err.message);
-      });
-  }, []);
 
   const userDropdown = (
     <Menu>
@@ -75,7 +64,9 @@ const layout = ({ children, user, logOut, router }) => {
         <Container renderer={<div className="header-inner" />}>
           <div className="header-left">
             <div className="logo">
-              <GithubOutlined style={githubIconStyle} />
+              <Link href="/">
+                <GithubOutlined style={githubIconStyle} />
+              </Link>
             </div>
             <div>
               <Input.Search
@@ -134,11 +125,14 @@ const layout = ({ children, user, logOut, router }) => {
           height: 100%;
         }
         .ant-layout {
-          height: 100%;
+          min-height: 100%;
         }
         .ant-layout-header {
           padding-left: 0;
           padding-right: 0;
+        }
+        .ant-layout-content {
+          background: #fff;
         }
       `}</style>
     </Layout>
