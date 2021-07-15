@@ -5,8 +5,8 @@ import Hoc from "../lib/with-redux";
 import PageLoading from "../components/PageLoading";
 import Link from "next/link";
 import router from "next/router";
-import axios from "axios";
 import Layout from "../components/Layout";
+import axios from "axios";
 
 import "../styles/globals.css";
 import "antd/dist/antd.css";
@@ -25,6 +25,10 @@ function MyApp({ Component, pageProps, reduxStore }) {
     router.events.on("routeChangeStart", changeIntoLoading);
     router.events.on("routeChangeComplete", changeNotLoading);
     router.events.on("routeChangeError", changeNotLoading);
+
+    // axios
+    //   .get("/github/search/repositories?q=react")
+    //   .then((resp) => console.log(resp));
 
     return () => {
       router.events.off("routeChangeStart", changeIntoLoading);
