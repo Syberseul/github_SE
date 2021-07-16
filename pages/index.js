@@ -86,16 +86,20 @@ function Index({ userRepos, userStaredRepos, user, router }) {
               onChange={handleTabChange}
               animated={false}
             >
-              <Tabs.TabPane tab="Your Repos" key="1">
-                {userRepos.map((repo) => (
-                  <Repo key={repo.id} repo={repo} />
-                ))}
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="Your Star Repos" key="2">
-                {userStaredRepos.map((repo) => (
-                  <Repo key={repo.id} repo={repo} />
-                ))}
-              </Tabs.TabPane>
+              {userRepos ? (
+                <Tabs.TabPane tab="Your Repos" key="1">
+                  {userRepos.map((repo) => (
+                    <Repo key={repo.id} repo={repo} />
+                  ))}
+                </Tabs.TabPane>
+              ) : null}
+              {userStaredRepos ? (
+                <Tabs.TabPane tab="Your Star Repos" key="2">
+                  {userStaredRepos.map((repo) => (
+                    <Repo key={repo.id} repo={repo} />
+                  ))}
+                </Tabs.TabPane>
+              ) : null}
             </Tabs>
           </div>
         </div>
