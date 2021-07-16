@@ -3,14 +3,18 @@ import { connect } from "react-redux";
 import Repo from "../components/Repo";
 import getConfig from "next/config";
 import Router, { withRouter } from "next/router";
-
+import LRU from "lru-cache";
 import { Button, Tabs } from "antd";
 
 const api = require("../lib/api");
 
+const cache = new LRU({
+  maxAge: 1000 * 60 * 5,
+});
+
 const { publicRuntimeConfig } = getConfig();
 
-let catchedUserRepos, catchedUserStaredRepos;
+// let cachedUserRepos, cachedUserStaredRepos;
 
 const isServer = typeof window === "undefined";
 
@@ -23,10 +27,24 @@ function Index({ userRepos, userStaredRepos, user, router }) {
 
   useEffect(() => {
     if (!isServer) {
-      catchedUserRepos = userRepos;
-      catchedUserStaredRepos = userStaredRepos;
+      if (userRepos) {
+        cache.set("userRepos", userRepos);
+      }
+      if (userStaredRepos) {
+        cache.set("userStaredRepos", userStaredRepos);
+      }
+
+      // cachedUserRepos = userRepos;
+      // cachedUserStaredRepos = userStaredRepos;
+      // const timeOut = setTimeout(() => {
+      //   cachedUserRepos = null;
+      //   cachedUserStaredRepos = null;
+      // }, 1000 * 10);
+      // return () => {
+      //   clearTimeout(timeOut);
+      // };
     }
-  }, []);
+  }, [userRepos, userStaredRepos]);
 
   if (!user || !user.id) {
     return (
@@ -119,12 +137,19 @@ function Index({ userRepos, userStaredRepos, user, router }) {
 
 Index.getInitialProps = async (ctx) => {
   if (!isServer) {
-    if (catchedUserRepos && catchedUserStaredRepos) {
+    if (cache.get("userRepos") && cache.get("userStaredRepos")) {
       return {
-        userRepos: catchedUserRepos,
-        userStaredRepos: catchedUserStaredRepos,
+        userRepos: cache.get("userRepos"),
+        userStaredRepos: cache.get("userStaredRepos"),
       };
     }
+
+    // if (cachedUserRepos && cachedUserStaredRepos) {
+    //   return {
+    //     userRepos: cachedUserRepos,
+    //     userStaredRepos: cachedUserStaredRepos,
+    //   };
+    // }
   }
 
   try {
