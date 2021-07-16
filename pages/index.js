@@ -1,5 +1,6 @@
-import Repo from "../components/Repo";
+import { useEffect } from "react";
 import { connect } from "react-redux";
+import Repo from "../components/Repo";
 import getConfig from "next/config";
 import Router, { withRouter } from "next/router";
 
@@ -9,12 +10,23 @@ const api = require("../lib/api");
 
 const { publicRuntimeConfig } = getConfig();
 
+let catchedUserRepos, catchedUserStaredRepos;
+
+const isServer = typeof window === "undefined";
+
 function Index({ userRepos, userStaredRepos, user, router }) {
   const tabKey = router.query.key || "1";
 
   const handleTabChange = (activeKey) => {
     Router.push(`/?key=${activeKey}`);
   };
+
+  useEffect(() => {
+    if (!isServer) {
+      catchedUserRepos = userRepos;
+      catchedUserStaredRepos = userStaredRepos;
+    }
+  }, []);
 
   if (!user || !user.id) {
     return (
@@ -58,12 +70,12 @@ function Index({ userRepos, userStaredRepos, user, router }) {
             >
               <Tabs.TabPane tab="Your Repos" key="1">
                 {userRepos.map((repo) => (
-                  <Repo repo={repo} />
+                  <Repo key={repo.id} repo={repo} />
                 ))}
               </Tabs.TabPane>
-              <Tabs.TabPane tab="Star Repos" key="2">
+              <Tabs.TabPane tab="Your Star Repos" key="2">
                 {userStaredRepos.map((repo) => (
-                  <Repo repo={repo} />
+                  <Repo key={repo.id} repo={repo} />
                 ))}
               </Tabs.TabPane>
             </Tabs>
@@ -106,6 +118,15 @@ function Index({ userRepos, userStaredRepos, user, router }) {
 }
 
 Index.getInitialProps = async (ctx) => {
+  if (!isServer) {
+    if (catchedUserRepos && catchedUserStaredRepos) {
+      return {
+        userRepos: catchedUserRepos,
+        userStaredRepos: catchedUserStaredRepos,
+      };
+    }
+  }
+
   try {
     const userRepos = await api.request(
       {
@@ -141,4 +162,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, null)(withRouter(Index));
+export default withRouter(connect(mapState, null)(Index));
