@@ -1,12 +1,21 @@
-import { Button, Icon } from "antd";
-import getConfig from "next/config";
+import Repo from "../components/Repo";
 import { connect } from "react-redux";
+import getConfig from "next/config";
+import Router, { withRouter } from "next/router";
+
+import { Button, Tabs } from "antd";
 
 const api = require("../lib/api");
 
 const { publicRuntimeConfig } = getConfig();
 
-function Index({ userRepos, userStaredRepos, user }) {
+function Index({ userRepos, userStaredRepos, user, router }) {
+  const tabKey = router.query.key || "1";
+
+  const handleTabChange = (activeKey) => {
+    Router.push(`/?key=${activeKey}`);
+  };
+
   if (!user || !user.id) {
     return (
       <div className="root">
@@ -41,7 +50,24 @@ function Index({ userRepos, userStaredRepos, user }) {
           </a>
         </div>
         <div className="user-repos">
-          <p>User Repos</p>
+          <div className="user-repos">
+            <Tabs
+              activeKey={tabKey}
+              onChange={handleTabChange}
+              animated={false}
+            >
+              <Tabs.TabPane tab="Your Repos" key="1">
+                {userRepos.map((repo) => (
+                  <Repo repo={repo} />
+                ))}
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Star Repos" key="2">
+                {userStaredRepos.map((repo) => (
+                  <Repo repo={repo} />
+                ))}
+              </Tabs.TabPane>
+            </Tabs>
+          </div>
         </div>
         <style jsx>{`
           .root {
@@ -70,6 +96,9 @@ function Index({ userRepos, userStaredRepos, user }) {
             font-size: 16px;
             color: #666;
           }
+          .user-repos: {
+            flex-grow: 1;
+          }
         `}</style>
       </div>
     );
@@ -80,7 +109,7 @@ Index.getInitialProps = async (ctx) => {
   try {
     const userRepos = await api.request(
       {
-        url: "/search/repositories?q=react",
+        url: "/user/repos",
       },
       ctx.req,
       ctx.res
@@ -112,4 +141,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, null)(Index);
+export default connect(mapState, null)(withRouter(Index));
