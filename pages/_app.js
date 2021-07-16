@@ -6,7 +6,6 @@ import PageLoading from "../components/PageLoading";
 import Link from "next/link";
 import router from "next/router";
 import Layout from "../components/Layout";
-import axios from "axios";
 
 import "../styles/globals.css";
 import "antd/dist/antd.css";
@@ -26,10 +25,6 @@ function MyApp({ Component, pageProps, reduxStore }) {
     router.events.on("routeChangeComplete", changeNotLoading);
     router.events.on("routeChangeError", changeNotLoading);
 
-    // axios
-    //   .get("/github/search/repositories?q=react")
-    //   .then((resp) => console.log(resp));
-
     return () => {
       router.events.off("routeChangeStart", changeIntoLoading);
       router.events.off("routeChangeComplete", changeNotLoading);
@@ -38,7 +33,7 @@ function MyApp({ Component, pageProps, reduxStore }) {
   }, [router.events]);
 
   MyApp.getInitialProps = async (ctx) => {
-    let appProps;
+    let appProps = {};
     if (App.getInitialProps) {
       const appProps = await App.getInitialProps(ctx);
       return { ...appProps };
@@ -50,12 +45,12 @@ function MyApp({ Component, pageProps, reduxStore }) {
     <Provider store={reduxStore}>
       {isLoading ? <PageLoading /> : null}
       <Layout>
-        <Link href="/">
+        {/* <Link href="/">
           <a>Index</a>
         </Link>
         <Link href="/detail">
           <a>Detail</a>
-        </Link>
+        </Link> */}
         <Component {...pageProps} />
       </Layout>
     </Provider>
