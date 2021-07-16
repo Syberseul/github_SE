@@ -31,13 +31,10 @@ app.prepare().then(() => {
 
   server.use(session(SESSION_CONFIG, server));
 
-  // setting up and dealling with github OAuth login
+  // setting up and dealing with github OAuth login
   auth(server);
-  api(server);
 
-  server.use(async (ctx, next) => {
-    await next();
-  });
+  api(server);
 
   router.get("/api/user/info", async (ctx) => {
     const user = ctx.session.userInfo;

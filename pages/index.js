@@ -1,12 +1,11 @@
 const api = require("../lib/api");
 const axios = require("axios");
 
-function Index({ data }) {
-  console.log(data);
+function Index() {
   return <span>Index</span>;
 }
 
-Index.getInitialProps = async ({ ctx }) => {
+Index.getInitialProps = async ({ req, res }) => {
   // const result = await axios
   //   .get("/github/search/repositories?q=react")
   //   .then((resp) => console.log(resp.data));
@@ -15,8 +14,8 @@ Index.getInitialProps = async ({ ctx }) => {
     {
       url: "/search/repositories?q=react",
     },
-    ctx.req,
-    ctx.res
+    req,
+    res
   );
 
   return {
