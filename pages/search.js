@@ -2,7 +2,6 @@ import { withRouter } from "next/router";
 import { Row, Col, List } from "antd";
 import Router from "next/router";
 import Link from "next/link";
-import { select } from "async";
 
 const api = require("../lib/api");
 
@@ -40,34 +39,22 @@ const SORT_TYPES = [
 const selectedStyle = {
   borderLeft: "4px solid #abcdef",
   fontWeight: 100,
+  color: "abcdef",
 };
 
+const FilterLink = ({ name, query, lang, sort, order }) => {
+  let queryString = `?query=${query}`;
+  if (lang) queryString += `&lang=${lang}`;
+  if (sort) queryString += `&sort=${sort}&order=${order || "desc"}`;
+  return (
+    <Link href={`/search${queryString}`}>
+      <a>{name}</a>
+    </Link>
+  );
+};
 function Search({ router, repos }) {
-  const { sort, order, lang, query } = router.query;
-
-  const handleLanguageChange = (language) => {
-    Router.push({
-      pathname: "/search",
-      query: {
-        query,
-        lang: language,
-        sort,
-        order,
-      },
-    });
-  };
-
-  const handleSortChange = (sort) => {
-    Router.push({
-      pathname: "/search",
-      query: {
-        query,
-        lang,
-        sort: sort.value,
-        order: sort.order,
-      },
-    });
-  };
+  const { ...queries } = router.query;
+  const { lang, sort, order } = router.query;
 
   return (
     <div className="root">
@@ -76,15 +63,16 @@ function Search({ router, repos }) {
           <List
             bordered
             header={<span className="list-header">Language</span>}
-            style={{ marginTop: 20 }}
             dataSource={LANGUAGES}
             renderItem={(item) => {
               const selected = lang === item;
               return (
                 <List.Item style={selected ? selectedStyle : null}>
-                  {/* <Link href="/search"> */}
-                  <a onClick={() => handleLanguageChange(item)}>{item}</a>
-                  {/* </Link> */}
+                  {selected ? (
+                    <span>{item}</span>
+                  ) : (
+                    <FilterLink {...queries} lang={item} name={item} />
+                  )}
                 </List.Item>
               );
             }}
@@ -105,15 +93,31 @@ function Search({ router, repos }) {
               }
               return (
                 <List.Item style={selected ? selectedStyle : null}>
-                  {/* <Link href="/search"> */}
-                  <a onClick={() => handleSortChange(item)}>{item.name}</a>
-                  {/* </Link> */}
+                  {selected ? (
+                    <span>{item.name}</span>
+                  ) : (
+                    <FilterLink
+                      {...queries}
+                      sort={item.value}
+                      order={item.order}
+                      name={item.name}
+                    />
+                  )}
                 </List.Item>
               );
             }}
           />
         </Col>
       </Row>
+      <style jsx>{`
+        .root {
+          padding: 20px 0;
+        }
+        .list-header {
+          font-weight: 800px;
+          font-size: 16px;
+        }
+      `}</style>
     </div>
   );
 }
