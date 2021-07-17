@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Icon } from "antd";
 import moment from "moment";
+import StarIcon from "@material-ui/icons/Star";
+import CallSplitIcon from "@material-ui/icons/CallSplit";
 
 function getLicense(license) {
   return license ? `${license.spdx_id} license` : "";
@@ -38,10 +39,16 @@ const Repo = ({ repo }) => {
       </div>
       <div className="lang-star">
         <span className="lang">{repo.language}</span>
-        <span className="stars">
-          {repo.stargazers_count}
-          <Icon type="star" theme="filled" />
-        </span>
+        <div className="star-fork">
+          <span className="stars">
+            {repo.stargazers_count}
+            <StarIcon fontSize="inherit" style={{ marginLeft: 2 }} />
+          </span>
+          <span className="forks">
+            {repo.forks_count}
+            <CallSplitIcon fontSize="inherit" style={{ marginLeft: 2 }} />
+          </span>
+        </div>
       </div>
       <style jsx>{`
         .root {
@@ -60,13 +67,18 @@ const Repo = ({ repo }) => {
         }
         .lang-star {
           display: flex;
+          justify-content: space-between;
         }
         .lang-star > span {
           width: 120px;
-          text-align: right;
         }
         .repo-desc {
           width: 400px;
+        }
+        .star-fork {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
         }
       `}</style>
     </div>
