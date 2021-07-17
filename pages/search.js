@@ -46,7 +46,7 @@ const selectedStyle = {
 
 function noop() {}
 
-const per_page = 30;
+const per_page = 15;
 
 const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
   let queryString = `?query=${query}`;
@@ -54,6 +54,8 @@ const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
   if (sort) queryString += `&sort=${sort}&order=${order || "desc"}`;
   if (page) queryString += `&page=${page}`;
   queryString += `&per_page=${per_page}`;
+
+  console.log(page);
 
   return (
     <Link href={`/search${queryString}`}>
@@ -136,8 +138,10 @@ function Search({ router, repos }) {
                   type === "page"
                     ? page
                     : type === "prev"
-                    ? page - 1
-                    : page + 1;
+                    ? page - 1 <= 0
+                      ? (page = 1)
+                      : page
+                    : page;
                 const name = type === "page" ? page : originalElement;
                 return <FilterLink {...queries} page={p} name={name} />;
               }}
