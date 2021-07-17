@@ -169,7 +169,7 @@ function Search({ router, repos }) {
   );
 }
 
-Search.getInitialProps = async (ctx) => {
+Search.getInitialProps = async ({ ctx }) => {
   const { query, sort, lang, order, page } = ctx.query;
 
   if (!query) {
