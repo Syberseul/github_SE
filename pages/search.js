@@ -46,7 +46,7 @@ const selectedStyle = {
 
 function noop() {}
 
-const per_page = 20;
+const per_page = 30;
 
 const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
   let queryString = `?query=${query}`;
@@ -124,7 +124,7 @@ function Search({ router, repos }) {
           ))}
           <div className="pagination">
             <Pagination
-              defaultPageSize={per_page}
+              pageSize={per_page}
               current={Number(page) || 1}
               total={repos.total_count}
               showTotal={(total, range) =>
@@ -136,9 +136,7 @@ function Search({ router, repos }) {
                   type === "page"
                     ? page
                     : type === "prev"
-                    ? page - 1 <= 0
-                      ? (page = 1)
-                      : page - 1
+                    ? page - 1
                     : page + 1;
                 const name = type === "page" ? page : originalElement;
                 return <FilterLink {...queries} page={p} name={name} />;
