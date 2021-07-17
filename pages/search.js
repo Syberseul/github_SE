@@ -46,7 +46,7 @@ const selectedStyle = {
 
 function noop() {}
 
-const per_page = 15;
+const per_page = 20;
 
 const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
   let queryString = `?query=${query}`;
@@ -54,8 +54,6 @@ const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
   if (sort) queryString += `&sort=${sort}&order=${order || "desc"}`;
   if (page) queryString += `&page=${page}`;
   queryString += `&per_page=${per_page}`;
-
-  console.log(page);
 
   return (
     <Link href={`/search${queryString}`}>
@@ -128,7 +126,7 @@ function Search({ router, repos }) {
             <Pagination
               pageSize={per_page}
               current={Number(page) || 1}
-              total={repos.total_count}
+              total={repos.total_count > 1000 ? 1000 : repos.total_count}
               showTotal={(total, range) =>
                 `${range[0]}-${range[1]} of ${total} items`
               }
@@ -138,7 +136,7 @@ function Search({ router, repos }) {
                   type === "page"
                     ? page
                     : type === "prev"
-                    ? page - 1 <= 0
+                    ? page <= 1
                       ? (page = 1)
                       : page
                     : page;
