@@ -33,12 +33,21 @@ function MyApp({ Component, pageProps, reduxStore }) {
   }, [router.events]);
 
   MyApp.getInitialProps = async (ctx) => {
-    let appProps = {};
-    if (App.getInitialProps) {
-      const appProps = await App.getInitialProps(ctx);
-      return { ...appProps };
+    // let appProps = {};
+    // if (App.getInitialProps) {
+    //   const appProps = await App.getInitialProps(ctx);
+    //   return { ...appProps };
+    // }
+    // return appProps;
+    const { Component } = ctx;
+    let pageProps = {};
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx);
+      // console.log(ctx);
     }
-    return appProps;
+    return {
+      pageProps,
+    };
   };
 
   return (

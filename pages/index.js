@@ -139,7 +139,16 @@ function Index({ userRepos, userStaredRepos, user, router }) {
   }
 }
 
-Index.getInitialProps = async (ctx) => {
+Index.getInitialProps = async ({ ctx, reduxStore }) => {
+  // console.log(ctx.req, ctx.res);
+
+  const user = reduxStore.getState().user;
+  if (!user || !user.id) {
+    return {
+      isLogin: false,
+    };
+  }
+
   if (!isServer) {
     if (cache.get("userRepos") && cache.get("userStaredRepos")) {
       return {
@@ -156,33 +165,27 @@ Index.getInitialProps = async (ctx) => {
     // }
   }
 
-  try {
-    const userRepos = await api.request(
-      {
-        url: "/user/repos",
-      },
-      ctx.req,
-      ctx.res
-    );
+  const userRepos = await api.request(
+    {
+      url: "/user/repos",
+    },
+    ctx.req,
+    ctx.res
+  );
 
-    const userStaredRepos = await api.request(
-      {
-        url: "/user/starred",
-      },
-      ctx.req,
-      ctx.res
-    );
+  const userStaredRepos = await api.request(
+    {
+      url: "/user/starred",
+    },
+    ctx.req,
+    ctx.res
+  );
 
-    return {
-      isLogin: true,
-      userRepos: userRepos.data,
-      userStaredRepos: userStaredRepos.data,
-    };
-  } catch (error) {
-    return {
-      isLogin: false,
-    };
-  }
+  return {
+    isLogin: true,
+    userRepos: userRepos.data,
+    userStaredRepos: userStaredRepos.data,
+  };
 };
 
 const mapState = (state) => {
