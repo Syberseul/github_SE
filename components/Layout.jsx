@@ -101,7 +101,7 @@ const layout = ({ children, user, logOut, router }) => {
         <Container>{children}</Container>
       </Content>
       <Footer style={footerStyle}>
-        Develop By Yiteng @
+        Developed By Yiteng @
         <a href="mailto:yteng.huang@gmail.com">yteng.huang@gmail.com</a>
       </Footer>
 
