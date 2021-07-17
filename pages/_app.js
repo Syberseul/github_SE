@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import App from "next/app";
 import { Provider } from "react-redux";
 import Hoc from "../lib/with-redux";
 import PageLoading from "../components/PageLoading";
-import Link from "next/link";
 import router from "next/router";
 import Layout from "../components/Layout";
 

@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
-import Repo from "../components/Repo";
 import getConfig from "next/config";
 import Router, { withRouter } from "next/router";
 import LRU from "lru-cache";
 import { Button, Tabs } from "antd";
 
+import Repo from "../components/Repo";
+import { cacheArray } from "../lib/repo-basic-cache";
+
 const api = require("../lib/api");
 
 const cache = new LRU({
-  maxAge: 1000 * 60 * 5,
+  maxAge: 1000 * 60 * 10,
 });
 
 const { publicRuntimeConfig } = getConfig();
@@ -45,6 +47,13 @@ function Index({ userRepos, userStaredRepos, user, router }) {
       // };
     }
   }, [userRepos, userStaredRepos]);
+
+  useEffect(() => {
+    if (!isServer) {
+      cacheArray(userRepos);
+      cacheArray(userStaredRepos);
+    }
+  });
 
   if (!user || !user.id) {
     return (
