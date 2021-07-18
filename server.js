@@ -6,6 +6,7 @@ const next = require("next");
 const auth = require("./server/auth");
 const api = require("./server/api");
 const koaBody = require("koa-body");
+const atob = require("atob");
 
 const RedisSessionStore = require("./server/session-store");
 
@@ -15,6 +16,9 @@ const handle = app.getRequestHandler();
 
 // create redis client
 const redis = new Redis();
+
+// set global function in nodejs to transfer encoded x64 text into markdown text (atob function)
+global.atob = atob;
 
 app.prepare().then(() => {
   const server = new Koa();
