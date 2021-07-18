@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import Repo from "./Repo";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,8 +18,8 @@ function makeQuery(queryObj) {
 
 const isServer = typeof window === "undefined";
 
-const withRepoBasic = (Comp, type = "index") => {
-  function withDetail({ repoBasic, ...rest }) {
+const WithRepoBasic = (Comp, type = "index") => {
+  function WithDetail({ repoBasic, ...rest }) {
     // useRouter to make sure function is accessible to passed in query
     const router = useRouter();
     // console.log(router);
@@ -71,7 +71,7 @@ const withRepoBasic = (Comp, type = "index") => {
     );
   }
 
-  withDetail.getInitialProps = async (context) => {
+  WithDetail.getInitialProps = async (context) => {
     // console.log(ctx.query);
     const { ctx } = context;
     const { owner, name } = ctx.query;
@@ -104,7 +104,7 @@ const withRepoBasic = (Comp, type = "index") => {
     };
   };
 
-  return withDetail;
+  return WithDetail;
 };
 
-export default withRepoBasic;
+export default WithRepoBasic;

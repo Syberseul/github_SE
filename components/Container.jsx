@@ -9,10 +9,12 @@ const style = {
   paddingRight: 20,
 };
 
-export default ({ children, renderer = <div /> }) => {
+const Container = ({ children, renderer = <div /> }) => {
   const newElement = cloneElement(renderer, {
     style: Object.assign({}, renderer.props.style, style),
     children,
   });
   return newElement;
 };
+
+export default Container;

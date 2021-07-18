@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
 import { GithubOutlined } from "@ant-design/icons";
 import Container from "./Container";
@@ -24,7 +24,7 @@ const footerStyle = {
 //   <div style={{ color, ...style }}>{children}</div>
 // );
 
-const layout = ({ children, user, logOut, router }) => {
+function HeaderLayout({ children, user, logOut, router }) {
   const urlQuery = router.query && router.query.query;
 
   const [search, setSearch] = useState(urlQuery || "");
@@ -38,7 +38,7 @@ const layout = ({ children, user, logOut, router }) => {
 
   const handleOnSearchChange = useCallback(() => {
     router.push(`/search?query=${search}`);
-  }, [search]);
+  }, [search, router]);
 
   const handleLogOut = useCallback(() => {
     logOut();
@@ -78,15 +78,15 @@ const layout = ({ children, user, logOut, router }) => {
             <div className="user">
               {user && user.id ? (
                 <Dropdown overlay={userDropdown}>
-                  <a href="/">
+                  <Link href="/">
                     <Avatar size={40} src={user.avatar_url} />
-                  </a>
+                  </Link>
                 </Dropdown>
               ) : (
                 <Tooltip title="Click to login">
-                  <a href={`/prepare-auth?url=${router.asPath}`}>
+                  <Link href={`/prepare-auth?url=${router.asPath}`}>
                     <Avatar size={40} icon="user" />
-                  </a>
+                  </Link>
                 </Tooltip>
               )}
             </div>
@@ -102,7 +102,7 @@ const layout = ({ children, user, logOut, router }) => {
       </Content>
       <Footer style={footerStyle}>
         Developed By Yiteng @
-        <a href="mailto:yteng.huang@gmail.com">yteng.huang@gmail.com</a>
+        <Link href="mailto:yteng.huang@gmail.com">yteng.huang@gmail.com</Link>
       </Footer>
 
       <style jsx>{`
@@ -133,7 +133,7 @@ const layout = ({ children, user, logOut, router }) => {
       `}</style>
     </Layout>
   );
-};
+}
 
 const mapState = (state) => ({
   user: state.user,
@@ -143,4 +143,4 @@ const mapDispatch = (dispatch) => ({
   logOut: () => dispatch(logOut()),
 });
 
-export default connect(mapState, mapDispatch)(withRouter(layout));
+export default connect(mapState, mapDispatch)(withRouter(HeaderLayout));

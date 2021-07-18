@@ -51,7 +51,7 @@ const per_page = 20;
 
 const isServer = typeof window === "undefined";
 
-const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
+const FilterLink = ({ name, query, lang, sort, order, page }) => {
   let queryString = `?query=${query}`;
   if (lang) queryString += `&lang=${lang}`;
   if (sort) queryString += `&sort=${sort}&order=${order || "desc"}`;
@@ -63,7 +63,7 @@ const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
       {isValidElement(name) ? name : <a>{name}</a>}
     </Link>
   );
-});
+};
 function Search({ router, repos }) {
   const { ...queries } = router.query;
   const { lang, sort, order, page } = router.query;

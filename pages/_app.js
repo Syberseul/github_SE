@@ -28,7 +28,7 @@ function MyApp({ Component, pageProps, reduxStore }) {
       router.events.off("routeChangeComplete", changeNotLoading);
       router.events.off("routeChangeError", changeNotLoading);
     };
-  }, [router.events]);
+  }, []);
 
   MyApp.getInitialProps = async (ctx) => {
     // let appProps = {};

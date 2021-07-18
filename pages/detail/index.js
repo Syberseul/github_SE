@@ -1,7 +1,13 @@
-import withRepoBasic from "../../components/with-repo-basic";
+import dynamic from "next/dynamic";
+import WithRepoBasic from "../../components/with-repo-basic";
 import api from "../../lib/api";
 
-import MarkdownRenderer from "../../components/MarkdownRenderer";
+const MarkdownRenderer = dynamic(
+  () => import("../../components/MarkdownRenderer"),
+  {
+    loading: () => <p>Loading.....</p>,
+  }
+);
 
 const Detail = ({ readme }) => {
   return <MarkdownRenderer content={readme.content} isBase64={true} />;
@@ -23,4 +29,4 @@ Detail.getInitialProps = async ({ ctx }) => {
   };
 };
 
-export default withRepoBasic(Detail, "index");
+export default WithRepoBasic(Detail, "index");

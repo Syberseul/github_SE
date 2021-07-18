@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
-import getConfig from "next/config";
 import Router, { withRouter } from "next/router";
+import Link from "next/link";
+import getConfig from "next/config";
 import LRU from "lru-cache";
 import { Button, Tabs } from "antd";
 
@@ -81,12 +82,12 @@ function Index({ userRepos, userStaredRepos, user, router }) {
           <span className="login">{user.login}</span>
           <span className="name">{user.name}</span>
           <span className="bio">{user.bio}</span>
-          <a href={user.html_url}>
+          <Link href={user.html_url}>
             <p className="url">{user.html_url}</p>
-          </a>
-          <a href={`mailto:${user.email}`}>
+          </Link>
+          <Link href={`mailto:${user.email}`}>
             <p className="url">{user.email}</p>
-          </a>
+          </Link>
         </div>
         <div className="user-repos">
           <div className="user-repos">
