@@ -1,23 +1,26 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
+
 import Router, { withRouter } from "next/router";
-import Link from "next/link";
 import getConfig from "next/config";
-import LRU from "lru-cache";
+import Link from "next/link";
+
 import { Button, Tabs } from "antd";
+import { GithubOutlined, MailOutlined } from "@ant-design/icons";
+// import LRU from "lru-cache";
 
 import Repo from "../components/Repo";
 import { cacheArray } from "../lib/repo-basic-cache";
 
 const api = require("../lib/api");
 
-const cache = new LRU({
-  maxAge: 1000 * 60 * 10,
-});
+// const cache = new LRU({
+//   maxAge: 1000 * 60 * 10,
+// });
 
 const { publicRuntimeConfig } = getConfig();
 
-// let cachedUserRepos, cachedUserStaredRepos;
+let cachedUserRepos, cachedUserStaredRepos;
 
 const isServer = typeof window === "undefined";
 
@@ -30,22 +33,22 @@ function Index({ userRepos, userStaredRepos, user, router }) {
 
   useEffect(() => {
     if (!isServer) {
-      if (userRepos) {
-        cache.set("userRepos", userRepos);
-      }
-      if (userStaredRepos) {
-        cache.set("userStaredRepos", userStaredRepos);
-      }
+      cachedUserRepos = userRepos;
+      cachedUserStaredRepos = userStaredRepos;
+      const timeOut = setTimeout(() => {
+        cachedUserRepos = null;
+        cachedUserStaredRepos = null;
+      }, 1000 * 10);
+      return () => {
+        clearTimeout(timeOut);
+      };
 
-      // cachedUserRepos = userRepos;
-      // cachedUserStaredRepos = userStaredRepos;
-      // const timeOut = setTimeout(() => {
-      //   cachedUserRepos = null;
-      //   cachedUserStaredRepos = null;
-      // }, 1000 * 10);
-      // return () => {
-      //   clearTimeout(timeOut);
-      // };
+      // if (userRepos) {
+      //   cache.set("userRepos", userRepos);
+      // }
+      // if (userStaredRepos) {
+      //   cache.set("userStaredRepos", userStaredRepos);
+      // }
     }
   }, [userRepos, userStaredRepos]);
 
@@ -82,20 +85,24 @@ function Index({ userRepos, userStaredRepos, user, router }) {
           <span className="login">{user.login}</span>
           <span className="name">{user.name}</span>
           <span className="bio">{user.bio}</span>
-          <Link href={user.html_url}>
-            <p className="url">{user.html_url}</p>
-          </Link>
-          <Link href={`mailto:${user.email}`}>
-            <p className="url">{user.email}</p>
-          </Link>
+          <div className="user-contact">
+            <GithubOutlined style={{ marginRight: 5 }} />
+            <Link href={user.html_url}>
+              <a>
+                <p className="url">{user.html_url}</p>
+              </a>
+            </Link>
+          </div>
+          <div className="user-contact">
+            <MailOutlined style={{ marginRight: 5 }} />
+            <a href={`mailto:${user.email}`}>
+              <p className="url">{user.email}</p>
+            </a>
+          </div>
         </div>
         <div className="user-repos">
           <div className="user-repos">
-            <Tabs
-              activeKey={tabKey}
-              onChange={handleTabChange}
-              animated={false}
-            >
+            <Tabs activeKey={tabKey} onChange={handleTabChange} animated={true}>
               {userRepos ? (
                 <Tabs.TabPane tab="Your Repos" key="1">
                   {userRepos.map((repo) => (
@@ -126,6 +133,16 @@ function Index({ userRepos, userStaredRepos, user, router }) {
             display: flex;
             flex-direction: column;
           }
+          .user-contact {
+            display: flex;
+            align-items: center;
+          }
+          .user-contact > a {
+            margin: 5px 0;
+          }
+          .user-contact > a > p {
+            margin: 0;
+          }
           .avatar {
             width: 100%;
             border-radius: 5px;
@@ -150,7 +167,8 @@ function Index({ userRepos, userStaredRepos, user, router }) {
 }
 
 Index.getInitialProps = async ({ ctx, reduxStore }) => {
-  // console.log(ctx.req, ctx.res);
+  // console.log(ctx.req);
+  // console.log(ctx.res);
 
   const user = reduxStore.getState().user;
   if (!user || !user.id) {
@@ -160,17 +178,17 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
   }
 
   if (!isServer) {
-    if (cache.get("userRepos") && cache.get("userStaredRepos")) {
+    if (cachedUserRepos && cachedUserStaredRepos) {
       return {
-        userRepos: cache.get("userRepos"),
-        userStaredRepos: cache.get("userStaredRepos"),
+        userRepos: cachedUserRepos,
+        userStaredRepos: cachedUserStaredRepos,
       };
     }
 
-    // if (cachedUserRepos && cachedUserStaredRepos) {
+    // if (cache.get("userRepos") && cache.get("userStaredRepos")) {
     //   return {
-    //     userRepos: cachedUserRepos,
-    //     userStaredRepos: cachedUserStaredRepos,
+    //     userRepos: cache.get("userRepos"),
+    //     userStaredRepos: cache.get("userStaredRepos"),
     //   };
     // }
   }

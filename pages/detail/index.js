@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+
 import WithRepoBasic from "../../components/with-repo-basic";
 import api from "../../lib/api";
 
@@ -14,6 +15,7 @@ const Detail = ({ readme }) => {
 };
 
 Detail.getInitialProps = async ({ ctx }) => {
+  // console.log(ctx.query);
   const { owner, name } = ctx.query;
 
   const readmeResp = await api.request(

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Provider } from "react-redux";
-import Hoc from "../lib/with-redux";
-import PageLoading from "../components/PageLoading";
 import router from "next/router";
-import Layout from "../components/Layout";
+
+import WithRedux from "../lib/with-redux";
+
+import PageLoading from "../components/PageLoading";
+import HeaderLayout from "../components/Layout";
 
 import "../styles/globals.css";
 import "antd/dist/antd.css";
@@ -31,12 +33,6 @@ function MyApp({ Component, pageProps, reduxStore }) {
   }, []);
 
   MyApp.getInitialProps = async (ctx) => {
-    // let appProps = {};
-    // if (App.getInitialProps) {
-    //   const appProps = await App.getInitialProps(ctx);
-    //   return { ...appProps };
-    // }
-    // return appProps;
     const { Component } = ctx;
     let pageProps = {};
     if (Component.getInitialProps) {
@@ -51,17 +47,11 @@ function MyApp({ Component, pageProps, reduxStore }) {
   return (
     <Provider store={reduxStore}>
       {isLoading ? <PageLoading /> : null}
-      <Layout>
-        {/* <Link href="/">
-          <a>Index</a>
-        </Link>
-        <Link href="/detail">
-          <a>Detail</a>
-        </Link> */}
+      <HeaderLayout>
         <Component {...pageProps} />
-      </Layout>
+      </HeaderLayout>
     </Provider>
   );
 }
 
-export default Hoc(MyApp);
+export default WithRedux(MyApp);

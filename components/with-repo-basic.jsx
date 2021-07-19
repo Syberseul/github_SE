@@ -1,28 +1,33 @@
 import React, { useEffect } from "react";
-import Repo from "./Repo";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import Repo from "./Repo";
 
 import api from "../lib/api";
 import { get, cache } from "../lib/repo-basic-cache";
 
 function makeQuery(queryObj) {
+  // console.log(queryObj);
   const query = Object.entries(queryObj)
     .reduce((result, entry) => {
       result.push(entry.join("="));
       return result;
     }, [])
     .join("&");
+  // console.log(query);
   return `?${query}`;
 }
 
 const isServer = typeof window === "undefined";
 
-const WithRepoBasic = (Comp, type = "index") => {
+const WithRepoBasic = (ChildComponent, type = "index") => {
   function WithDetail({ repoBasic, ...rest }) {
     // useRouter to make sure function is accessible to passed in query
+    // console.log(repoBasic);
+    // console.log(rest);
     const router = useRouter();
-    // console.log(router);
+    // console.log(router.query);
     const query = makeQuery(router.query);
 
     useEffect(() => {
@@ -51,7 +56,7 @@ const WithRepoBasic = (Comp, type = "index") => {
           </div>
         </div>
         <div>
-          <Comp {...rest} />
+          <ChildComponent {...rest} />
         </div>
         <style jsx>{`
           .root {
@@ -79,8 +84,8 @@ const WithRepoBasic = (Comp, type = "index") => {
     const full_name = `${owner}/${name}`;
 
     let pageData = {};
-    if (Comp.getInitialProps) {
-      pageData = await Comp.getInitialProps(context);
+    if (ChildComponent.getInitialProps) {
+      pageData = await ChildComponent.getInitialProps(context);
     }
 
     if (get(full_name)) {
@@ -106,5 +111,4 @@ const WithRepoBasic = (Comp, type = "index") => {
 
   return WithDetail;
 };
-
 export default WithRepoBasic;

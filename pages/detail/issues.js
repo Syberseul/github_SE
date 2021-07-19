@@ -115,6 +115,7 @@ function makeQuery(creator, state, labels) {
   if (creatorStr) arr.push(creatorStr);
   if (stateStr) arr.push(stateStr);
   if (labelStr) arr.push(labelStr);
+  // console.log(arr);
 
   return `?${arr.join("&")}`;
 }
@@ -157,6 +158,7 @@ const Issues = ({ owner, name, initialIssues, labels }) => {
     if (!isServer) {
       CACHE[`${owner}/${name}`] = labels;
     }
+    // console.log(CACHE);
   }, [owner, name, labels]);
 
   const handleCreatorChange = useCallback((value) => {
@@ -181,7 +183,7 @@ const Issues = ({ owner, name, initialIssues, labels }) => {
       .then((resp) => {
         setIssues(resp.data);
         setFetching(false);
-        console.log(resp.data);
+        // console.log(resp.data);
       })
       .catch((err) => {
         console.error(err.message);

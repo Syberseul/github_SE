@@ -1,7 +1,8 @@
-import { memo, isValidElement, useEffect } from "react";
+import { isValidElement, useEffect } from "react";
+
+import Link from "next/link";
 import { withRouter } from "next/router";
 import { Row, Col, List, Pagination } from "antd";
-import Link from "next/link";
 
 import Repo from "../components/Repo";
 import { cacheArray } from "../lib/repo-basic-cache";
@@ -12,7 +13,16 @@ const api = require("../lib/api");
 // main language
 // pagination
 
-const LANGUAGES = ["JavaScript", "HTML", "CSS", "TypeScript", "Java", "C"];
+const LANGUAGES = [
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "TypeScript",
+  "Java",
+  "C",
+  "Python",
+  "Ruby",
+];
 const SORT_TYPES = [
   {
     name: "Best Match",
@@ -45,9 +55,7 @@ const selectedStyle = {
   color: "#abcdef",
 };
 
-function noop() {}
-
-const per_page = 20;
+const PER_PAGE = 20;
 
 const isServer = typeof window === "undefined";
 
@@ -56,7 +64,7 @@ const FilterLink = ({ name, query, lang, sort, order, page }) => {
   if (lang) queryString += `&lang=${lang}`;
   if (sort) queryString += `&sort=${sort}&order=${order || "desc"}`;
   if (page) queryString += `&page=${page}`;
-  queryString += `&per_page=${per_page}`;
+  queryString += `&per_page=${PER_PAGE}`;
 
   return (
     <Link href={`/search${queryString}`}>
@@ -101,11 +109,11 @@ function Search({ router, repos }) {
             renderItem={(item) => {
               let selected = false;
               if (item.name === "Best Match" && !sort) {
-                selected = true;
+                selected = true; // default
               } else if (item.value === sort && item.order === order) {
-                selected = true;
+                selected = true; // selected
               } else {
-                selected = false;
+                selected = false; // rest not selected
               }
               return (
                 <List.Item style={selected ? selectedStyle : null}>
@@ -131,13 +139,12 @@ function Search({ router, repos }) {
           ))}
           <div className="pagination">
             <Pagination
-              pageSize={per_page}
+              pageSize={PER_PAGE}
               current={Number(page) || 1}
               total={repos.total_count > 1000 ? 1000 : repos.total_count}
               showTotal={(total, range) =>
                 `${range[0]}-${range[1]} of ${total} items`
               }
-              onChange={noop}
               itemRender={(page, type, originalElement) => {
                 const p =
                   type === "page"
@@ -191,7 +198,7 @@ Search.getInitialProps = async ({ ctx }) => {
   if (lang) queryString += `+language:${lang}`;
   if (sort) queryString += `&sort=${sort}&order=${order || "desc"}`;
   if (page) queryString += `&page=${page}`;
-  queryString += `&per_page=${per_page}`;
+  queryString += `&per_page=${PER_PAGE}`;
 
   const result = await api.request(
     {

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { Select, Spin } from "antd";
-import debounce from "lodash/debounce";
+import debounce from "lodash/debounce"; // avoid instantly asking server when input field changes
 
 import api from "../lib/api";
 
@@ -27,6 +27,7 @@ function SearchUser({ onChange, value }) {
         .then((resp) => {
           //   console.log("user: ", resp);
           if (fetchId !== lastFetchIdRef.current) return;
+          // discard multiple request, only remain the latest request
 
           const data = resp.data.items.map((user) => ({
             text: user.login,

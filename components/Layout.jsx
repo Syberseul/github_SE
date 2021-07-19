@@ -1,11 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
-import { GithubOutlined } from "@ant-design/icons";
-import Container from "./Container";
 import { connect } from "react-redux";
 import { withRouter } from "next/router";
-import { logOut } from "../store/store";
 import Link from "next/link";
+
+import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
+import { GithubOutlined } from "@ant-design/icons";
+
+import Container from "./Container";
+import { logOut } from "../store/store";
 
 const { Header, Content, Footer } = Layout;
 
@@ -29,12 +31,15 @@ function HeaderLayout({ children, user, logOut, router }) {
 
   const [search, setSearch] = useState(urlQuery || "");
 
-  const handerSearchChange = useCallback(
-    (event) => {
-      setSearch(event.target.value);
+  const handleSearchChange = useCallback(
+    ({ target }) => {
+      setSearch(target.value);
     },
     [setSearch]
   );
+
+  const Item = Menu.Item;
+  const Search = Input.Search;
 
   const handleOnSearchChange = useCallback(() => {
     router.push(`/search?query=${search}`);
@@ -46,11 +51,11 @@ function HeaderLayout({ children, user, logOut, router }) {
 
   const userDropdown = (
     <Menu>
-      <Menu.Item>
+      <Item>
         <a href="javascript:void(0)" onClick={handleLogOut}>
           Log Out
         </a>
-      </Menu.Item>
+      </Item>
     </Menu>
   );
 
@@ -65,10 +70,10 @@ function HeaderLayout({ children, user, logOut, router }) {
               </Link>
             </div>
             <div>
-              <Input.Search
+              <Search
                 placeholder="Search Repo..."
                 value={search}
-                onChange={handerSearchChange}
+                onChange={handleSearchChange}
                 onSearch={handleOnSearchChange}
                 style={{ marginTop: 5 }}
               />
@@ -78,9 +83,9 @@ function HeaderLayout({ children, user, logOut, router }) {
             <div className="user">
               {user && user.id ? (
                 <Dropdown overlay={userDropdown}>
-                  <Link href="/">
+                  <a href="/">
                     <Avatar size={40} src={user.avatar_url} />
-                  </Link>
+                  </a>
                 </Dropdown>
               ) : (
                 <Tooltip title="Click to login">
@@ -94,11 +99,11 @@ function HeaderLayout({ children, user, logOut, router }) {
         </Container>
       </Header>
       <Content>
+        <Container>{children}</Container>
         {/* <Container renderer={<Comp color="red" style={{ fontSize: 40 }} />}>
           {children}
         </Container> */}
         {/* <Container renderer={<div />}>{children}</Container> */}
-        <Container>{children}</Container>
       </Content>
       <Footer style={footerStyle}>
         Developed By Yiteng @
