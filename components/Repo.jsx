@@ -1,14 +1,11 @@
 import Link from "next/link";
-import moment from "moment";
 import StarIcon from "@material-ui/icons/Star";
 import CallSplitIcon from "@material-ui/icons/CallSplit";
 
+import { getLastUpdated } from "../lib/util";
+
 function getLicense(license) {
   return license ? `${license.spdx_id} license` : "";
-}
-
-function getLastUpdated(time) {
-  return moment(time).fromNow();
 }
 
 const Repo = ({ repo }) => {
