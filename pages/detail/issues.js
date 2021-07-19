@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Avatar, Button, Select, Spin } from "antd";
 import dynamic from "next/dynamic";
 
@@ -7,6 +7,8 @@ import SearchUser from "../../components/SearchUser";
 
 import api from "../../lib/api";
 import { getLastUpdated } from "../../lib/util";
+
+const CACHE = {};
 
 const MarkdownRenderer = dynamic(() =>
   import("../../components/MarkdownRenderer")
@@ -58,6 +60,9 @@ function IssueItem({ issue }) {
         <div className="main-info">
           <h6>
             <span>{issue.title}</span>
+            {issue.labels.map((label) => (
+              <Label label={label} key={label.id} />
+            ))}
           </h6>
           <p className="sub-info">
             <span>Updated at {getLastUpdated(issue.updated_at)}</span>
@@ -114,6 +119,28 @@ function makeQuery(creator, state, labels) {
   return `?${arr.join("&")}`;
 }
 
+function Label({ label }) {
+  return (
+    <>
+      <span className="label" style={{ backgroundColor: `#${label.color}` }}>
+        {label.name}
+      </span>
+      <style jsx>{`
+        .label {
+          display: inline-block;
+          line-height: 20px;
+          margin-left: 15px;
+          padding: 2px 10px;
+          font-size: 10px;
+          border-radius: 5px;
+        }
+      `}</style>
+    </>
+  );
+}
+
+const isServer = typeof window === "undefined";
+
 const Option = Select.Option;
 
 const Issues = ({ owner, name, initialIssues, labels }) => {
@@ -125,6 +152,12 @@ const Issues = ({ owner, name, initialIssues, labels }) => {
   const [label, setLabel] = useState([]);
   const [issues, setIssues] = useState(initialIssues);
   const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    if (!isServer) {
+      CACHE[`${owner}/${name}`] = labels;
+    }
+  }, [owner, name, labels]);
 
   const handleCreatorChange = useCallback((value) => {
     setCreator(value);
@@ -148,6 +181,7 @@ const Issues = ({ owner, name, initialIssues, labels }) => {
       .then((resp) => {
         setIssues(resp.data);
         setFetching(false);
+        console.log(resp.data);
       })
       .catch((err) => {
         console.error(err.message);
@@ -233,6 +267,8 @@ Issues.getInitialProps = async ({ ctx }) => {
   const { owner, name } = ctx.query;
   // console.log(owner, name);
 
+  const full_name = `${owner}/${name}`;
+
   const fetchs = await Promise.all([
     await api.request(
       {
@@ -241,13 +277,15 @@ Issues.getInitialProps = async ({ ctx }) => {
       ctx.req,
       ctx.res
     ),
-    await api.request(
-      {
-        url: `/repos/${owner}/${name}/labels`,
-      },
-      ctx.req,
-      ctx.res
-    ),
+    CACHE[full_name]
+      ? Promise.resolve({ data: CACHE[full_name] })
+      : await api.request(
+          {
+            url: `/repos/${owner}/${name}/labels`,
+          },
+          ctx.req,
+          ctx.res
+        ),
   ]);
 
   return {
