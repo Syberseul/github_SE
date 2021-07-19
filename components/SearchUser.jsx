@@ -52,10 +52,10 @@ function SearchUser({ onChange, value }) {
 
   return (
     <Select
+      placeholder="Creator..."
       showSearch={true}
       notFoundContent={fetching ? <Spin size="small" /> : <span>...</span>}
       filterOption={false}
-      placeholder="creator"
       value={value}
       onSearch={fetchUser}
       onChange={handleChange}

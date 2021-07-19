@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Select, Spin } from "antd";
 import dynamic from "next/dynamic";
 
 import withRepoBasic from "../../components/with-repo-basic";
@@ -45,7 +45,7 @@ function IssueItem({ issue }) {
     <>
       <div className="issue">
         <Button
-          type="primary"
+          type="secondary"
           size="small"
           style={{ position: "absolute", right: 10, top: 10 }}
           onClick={toggleShowDetail}
@@ -98,28 +98,131 @@ function IssueItem({ issue }) {
   );
 }
 
-const Issues = ({ issues }) => {
-  // console.log(issues);
+function makeQuery(creator, state, labels) {
+  let creatorStr = creator ? `creator=${creator}` : "";
+  let stateStr = state ? `state=${state}` : "";
+  let labelStr = "";
+  if (labels && labels.length > 0) {
+    labelStr = `labels=${labels.join(",")}`;
+  }
+
+  const arr = [];
+  if (creatorStr) arr.push(creatorStr);
+  if (stateStr) arr.push(stateStr);
+  if (labelStr) arr.push(labelStr);
+
+  return `?${arr.join("&")}`;
+}
+
+const Option = Select.Option;
+
+const Issues = ({ owner, name, initialIssues, labels }) => {
+  // console.log(initialIssues);
+  // console.log(labels);
+
   const [creator, setCreator] = useState("");
+  const [state, setState] = useState();
+  const [label, setLabel] = useState([]);
+  const [issues, setIssues] = useState(initialIssues);
+  const [fetching, setFetching] = useState(false);
 
   const handleCreatorChange = useCallback((value) => {
     setCreator(value);
   }, []);
+  const handleStateChange = useCallback((value) => {
+    setState(value);
+  }, []);
+  const handleLabelChange = useCallback((value) => {
+    setLabel(value);
+  }, []);
+  const handleSearch = useCallback(() => {
+    setFetching(true);
+    api
+      .request({
+        url: `/repos/${owner}/${name}/issues${makeQuery(
+          creator,
+          state,
+          label
+        )}`,
+      })
+      .then((resp) => {
+        setIssues(resp.data);
+        setFetching(false);
+      })
+      .catch((err) => {
+        console.error(err.message);
+        setFetching(false);
+      });
+  }, [owner, name, creator, state, label]);
 
   return (
     <div className="root">
-      <SearchUser onChange={handleCreatorChange} value={creator} />
-      <div className="issues">
-        {issues.map((issue) => (
-          <IssueItem issue={issue} key={issue.id} />
-        ))}
+      <div className="search">
+        {/* Search by user */}
+        <SearchUser
+          onChange={handleCreatorChange}
+          value={creator || undefined}
+        />
+        {/* Search by issue status */}
+        <Select
+          placeholder="Status"
+          onChange={handleStateChange}
+          value={state}
+          style={{ width: 150, marginLeft: 50 }}
+        >
+          <Option value="all">All Status</Option>
+          <Option value="open">Open</Option>
+          <Option value="closed">Closed</Option>
+        </Select>
+        {/* Search by issue labels */}
+        <Select
+          mode="multiple"
+          placeholder="Labels"
+          onChange={handleLabelChange}
+          value={label}
+          style={{ width: 150, marginLeft: 50, flexGrow: 1 }}
+        >
+          {labels.map((label) => (
+            <Option value={label.name} key={label.id}>
+              {label.name}
+            </Option>
+          ))}
+        </Select>
+        <Button
+          type="primary"
+          onClick={handleSearch}
+          style={{ marginLeft: 50 }}
+          disabled={fetching}
+        >
+          Search
+        </Button>
       </div>
+      {fetching ? (
+        <div className="loading">
+          <Spin />
+        </div>
+      ) : (
+        <div className="issues">
+          {issues.map((issue) => (
+            <IssueItem issue={issue} key={issue.id} />
+          ))}
+        </div>
+      )}
       <style jsx>{`
         .issues {
           border: 1px solid #eee;
           border-radius: 5px;
           margin-bottom: 20px;
           margin-top: 20px;
+        }
+        .search {
+          display: flex;
+        }
+        .loading {
+          height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       `}</style>
     </div>
@@ -130,16 +233,28 @@ Issues.getInitialProps = async ({ ctx }) => {
   const { owner, name } = ctx.query;
   // console.log(owner, name);
 
-  const issuesResp = await api.request(
-    {
-      url: `/repos/${owner}/${name}/issues`,
-    },
-    ctx.req,
-    ctx.res
-  );
+  const fetchs = await Promise.all([
+    await api.request(
+      {
+        url: `/repos/${owner}/${name}/issues`,
+      },
+      ctx.req,
+      ctx.res
+    ),
+    await api.request(
+      {
+        url: `/repos/${owner}/${name}/labels`,
+      },
+      ctx.req,
+      ctx.res
+    ),
+  ]);
 
   return {
-    issues: issuesResp.data,
+    owner,
+    name,
+    initialIssues: fetchs[0].data,
+    labels: fetchs[1].data,
   };
 };
 
