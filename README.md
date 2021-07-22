@@ -45,6 +45,11 @@ REQUEST_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 4. Install Redis <a href="https://redis.io/download">>Reference Link<</a>
 
 ## <a id="demo">Demo:</a>
-  
+https://user-images.githubusercontent.com/32564367/126612430-3735ca56-9905-4d78-9bd7-32559786c196.mp4
+
+https://user-images.githubusercontent.com/32564367/126612483-119a1a1b-5396-43f5-8abd-77eef1ddb5f0.mp4
+
+https://user-images.githubusercontent.com/32564367/126612693-dfcd9632-9088-4154-81ea-db7b1d0d491c.mp4
+
 ## <a id="contact">Contact Email:</a>
 yteng.huang@gmail.com
