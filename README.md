@@ -7,6 +7,8 @@
 - <a href="#getting-started">Getting Started</a>
   - <a href="#prerequisites">Prerequisites</a>
   - <a href="#installation">Installation</a>
+- <a href="#demo">Demo</a>
+- <a href="#contact">Contact</a>
 
 ## <a id="about">About the Project</a>
 A github search engine developed with Next.js
@@ -24,11 +26,25 @@ A github search engine developed with Next.js
 ## <a id="getting-started">Getting Started:</a>
 ### <a id="prerequisites">Prerequisites</a>
 This section is about some tips to help you play with this demo on your own device 🛀
- - npm `npm install npm@latest -g` to install latest npm
- - in your vsCode terminal, try enter `npm -v` and make sure it gives the version of your npm
- - login your github account and under <a href="https://github.com/settings/developers">Github Developer Setting</a> to get your free CLIENT_ID and CLIENT_SECRET Key by creating a New OAuth App
+ 1. (Optional) Enter `npm install npm@latest -g` in your vsCode terminal to install latest npm globally
+ 2. (Optional) Enter `npm -v` in your vsCode terminal and make sure it gives the version of your npm
+ 3. Login your github account and under <a href="https://github.com/settings/developers">Github Developer Setting</a> to get your free CLIENT_ID and CLIENT_SECRET Key by creating a New OAuth App
 ### <a id="installation">Installation</a>
 1. Clone the repo to your local device
 `git clone https://github.com/Syberseul/github_SE.git`
 2. Install required dependencies  
 `npm install`
+3. Create `.env` file at the root of the folder, and enter:  
+```
+GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize'
+SCOPE = 'user'
+CLIENT_ID = 'CLIENT_ID goes here'
+CLIENT_SECRET = 'CLIENT_SECRET goes here'
+REQUEST_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+```
+4. Install Redis <a href="https://redis.io/download">>Reference Link<</a>
+
+## <a id="demo">Demo:</a>
+  
+## <a id="contact">Contact Email:</a>
+yteng.huang@gmail.com
